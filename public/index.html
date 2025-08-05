@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Akira API - Painel</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
+  body {
+    margin: 0; padding: 0; font-family: 'Montserrat', sans-serif;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    color: #f0f0f0;
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+    padding: 2rem;
+  }
+  header {
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+  header h1 {
+    font-weight: 700;
+    font-size: 2.5rem;
+    margin: 0;
+    letter-spacing: 2px;
+  }
+  main {
+    background: rgba(0,0,0,0.5);
+    border-radius: 12px;
+    padding: 2rem;
+    width: 100%;
+    max-width: 600px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  }
+  label {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+  input[type="text"] {
+    width: 100%;
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    border: none;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+  button {
+    background: #4a90e2;
+    border: none;
+    color: #fff;
+    font-weight: 700;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-right: 1rem;
+    transition: background 0.3s ease;
+  }
+  button:hover {
+    background: #357ABD;
+  }
+  .info {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+  #output {
+    background: #222;
+    padding: 1rem;
+    border-radius: 10px;
+    margin-top: 1rem;
+    max-height: 200px;
+    overflow-y: auto;
+    font-family: monospace;
+    white-space: pre-wrap;
+  }
+  .flex-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+  .flex-row > * {
+    margin-bottom: 0.5rem;
+  }
+  @media(max-width: 400px){
+    button {
+      width: 100%;
+      margin-right: 0;
+      margin-bottom: 0.5rem;
+    }
+    .flex-row {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+</style>
+</head>
+<body>
+  <header>
+    <h1>Akira API - Painel do Usuário</h1>
+    <p>Gerencie sua API Key e monitore seus requests</p>
+  </header>
+
+  <main>
+    <div class="flex-row">
+      <label for="apikey">Sua API Key:</label>
+      <input type="text" id="apikey" placeholder="4K1R4xxxxxxx..." autocomplete="off" />
+    </div>
+    <div class="flex-row">
+      <button id="btn-changeKey">Trocar API Key</button>
+      <button id="btn-getData">Fazer Requisição</button>
+    </div>
+
+    <div class="info">
+      <p><strong>Status da Key:</strong> <span id="keyStatus">Nenhuma key inserida</span></p>
+      <p><strong>Requests restantes:</strong> <span id="requestsLeft">-</span></p>
+    </div>
+
+    <div id="output">Resultado da requisição aparecerá aqui.</div>
+
+    <section style="margin-top: 2rem; font-size: 0.9rem; line-height: 1.5;">
+      <h2>Sobre a Akira API</h2>
+      <p>
+        A Akira API oferece serviços incríveis para você integrar facilmente em seus projetos.
+        Cada usuário recebe uma API Key única que começa com <code>4K1R4</code>, garantindo segurança e controle.
+      </p>
+      <p>
+        Você pode trocar sua Key a qualquer momento usando o botão acima. Cada Key possui um limite de requests diários que é exibido acima.
+      </p>
+      <p>
+        Use a API para acessar dados atualizados, com alta disponibilidade e velocidade.
+      </p>
+    </section>
+  </main>
+
+<script>
+  // Simulando armazenamento da API Key e requests restantes (pode usar localStorage ou cookies)
+  let apiKey = '';
+  let requestsLeft = 10; // valor inicial simulado
+
+  // Função para gerar uma key aleatória começando com 4K1R4 + letras e números
+  function generateApiKey() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let key = '4K1R4';
+    for (let i = 0; i < 10; i++) {
+      key += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return key;
+  }
+
+  function updateUI() {
+    const keyInput = document.getElementById('apikey');
+    const keyStatus = document.getElementById('keyStatus');
+    const requestsLeftSpan = document.getElementById('requestsLeft');
+
+    if (!apiKey) {
+      keyStatus.textContent = 'Nenhuma key inserida';
+      requestsLeftSpan.textContent = '-';
+    } else {
+      keyStatus.textContent = `Key válida: ${apiKey}`;
+      requestsLeftSpan.textContent = requestsLeft;
+    }
+    keyInput.value = apiKey;
+  }
+
+  document.getElementById('btn-changeKey').addEventListener('click', () => {
+    apiKey = generateApiKey();
+    requestsLeft = 10; // reseta o contador de requests
+    updateUI();
+    document.getElementById('output').textContent = 'Nova API Key gerada com sucesso!';
+  });
+
+  document.getElementById('btn-getData').addEventListener('click', async () => {
+    const output = document.getElementById('output');
+
+    if (!apiKey) {
+      output.textContent = 'Por favor, gere ou insira uma API Key antes de fazer a requisição.';
+      return;
+    }
+    if (requestsLeft <= 0) {
+      output.textContent = 'Limite de requests atingido para a API Key atual.';
+      return;
+    }
+
+    output.textContent = 'Carregando...';
+
+    try {
+      // Aqui você colocaria o endpoint real da sua API, incluindo a key (exemplo fictício)
+      const res = await fetch(`https://akira-api.com/data?key=${encodeURIComponent(apiKey)}`);
+
+      if (!res.ok) throw new Error(`Erro na requisição: ${res.status}`);
+
+      const data = await res.json();
+
+      output.textContent = JSON.stringify(data, null, 2);
+
+      requestsLeft--;
+      updateUI();
+
+    } catch (e) {
+      output.textContent = 'Erro: ' + e.message;
+    }
+  });
+
+  // Inicializa a UI
+  updateUI();
+</script>
+</body>
+</html>
