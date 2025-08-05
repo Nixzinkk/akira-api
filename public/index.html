@@ -1,211 +1,558 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Akira API - Painel</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
-
-  body {
-    margin: 0; padding: 0; font-family: 'Montserrat', sans-serif;
-    background: linear-gradient(135deg, #1e3c72, #2a5298);
-    color: #f0f0f0;
-    min-height: 100vh;
-    display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
-    padding: 2rem;
-  }
-  header {
-    margin-bottom: 2rem;
-    text-align: center;
-  }
-  header h1 {
-    font-weight: 700;
-    font-size: 2.5rem;
-    margin: 0;
-    letter-spacing: 2px;
-  }
-  main {
-    background: rgba(0,0,0,0.5);
-    border-radius: 12px;
-    padding: 2rem;
-    width: 100%;
-    max-width: 600px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-  }
-  label {
-    display: block;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-  }
-  input[type="text"] {
-    width: 100%;
-    padding: 0.6rem 1rem;
-    border-radius: 8px;
-    border: none;
-    font-size: 1rem;
-    margin-bottom: 1rem;
-  }
-  button {
-    background: #4a90e2;
-    border: none;
-    color: #fff;
-    font-weight: 700;
-    padding: 0.8rem 1.5rem;
-    border-radius: 8px;
-    cursor: pointer;
-    margin-right: 1rem;
-    transition: background 0.3s ease;
-  }
-  button:hover {
-    background: #357ABD;
-  }
-  .info {
-    margin-top: 1rem;
-    font-size: 0.9rem;
-    line-height: 1.4;
-  }
-  #output {
-    background: #222;
-    padding: 1rem;
-    border-radius: 10px;
-    margin-top: 1rem;
-    max-height: 200px;
-    overflow-y: auto;
-    font-family: monospace;
-    white-space: pre-wrap;
-  }
-  .flex-row {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    margin-bottom: 1rem;
-  }
-  .flex-row > * {
-    margin-bottom: 0.5rem;
-  }
-  @media(max-width: 400px){
-    button {
-      width: 100%;
-      margin-right: 0;
-      margin-bottom: 0.5rem;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>AKIRA-API Dashboard</title>
+  <style>
+    :root {
+      --bg:#0f111a;
+      --card:#1f2235;
+      --radius:14px;
+      --shadow:0 25px 60px -10px rgba(0,0,0,.6);
+      --gradient:linear-gradient(135deg,#6f5ce8,#e86fb3);
+      --text:#e4e9f8;
+      --muted:#8a93b2;
+      --border:rgba(255,255,255,.08);
+      font-family: "Segoe UI", system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
     }
-    .flex-row {
-      flex-direction: column;
-      align-items: stretch;
+    *{box-sizing:border-box;}
+    body {
+      margin:0;
+      background: radial-gradient(circle at 30% 40%, #1a1f3f 0%, #0f111a 80%);
+      color: var(--text);
+      min-height:100vh;
     }
-  }
-</style>
+    .container {
+      max-width: 1120px;
+      margin:0 auto;
+      padding:1.5rem 1rem 4rem;
+    }
+    header {
+      display:flex;
+      flex-wrap:wrap;
+      justify-content: space-between;
+      align-items:center;
+      gap:1rem;
+      margin-bottom:1rem;
+    }
+    h1 {
+      margin:0;
+      font-size:2rem;
+      display:flex;
+      align-items:center;
+      gap:.5rem;
+    }
+    .badge {
+      background: var(--gradient);
+      padding:6px 16px;
+      border-radius:999px;
+      font-size:0.65rem;
+      text-transform: uppercase;
+      letter-spacing:1px;
+      margin-left:4px;
+      color:#fff;
+    }
+    .pill {
+      background: rgba(255,255,255,.08);
+      padding:6px 12px;
+      border-radius:6px;
+      font-size:0.65rem;
+      display:inline-block;
+      margin-right:4px;
+    }
+    .key-panel {
+      display:flex;
+      gap:1rem;
+      flex-wrap:wrap;
+      margin-top:8px;
+    }
+    .card {
+      background: var(--card);
+      border-radius:16px;
+      padding:1.25rem 1.5rem;
+      box-shadow: var(--shadow);
+      flex:1 1 300px;
+      display:flex;
+      flex-direction:column;
+      gap:1rem;
+      position:relative;
+    }
+    .btn {
+      cursor:pointer;
+      border:none;
+      padding:12px 18px;
+      border-radius:10px;
+      font-weight:600;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      transition:filter .2s;
+      background: var(--gradient);
+      color:#fff;
+    }
+    .btn-secondary {
+      background:rgba(255,255,255,.08);
+      color:#fff;
+    }
+    .flex {
+      display:flex;
+      gap:.75rem;
+      align-items:center;
+    }
+    .meter {
+      background: var(--border);
+      border-radius:8px;
+      overflow:hidden;
+      flex:1;
+      height:12px;
+      position:relative;
+    }
+    .meter-inner {
+      height:100%;
+      background: #00d084;
+      transition:width .25s;
+    }
+    .key-display {
+      background: #0f111a;
+      border:1px solid var(--border);
+      padding:10px 12px;
+      border-radius:8px;
+      font-family: monospace;
+      width:100%;
+      color:#fff;
+      user-select: all;
+    }
+    .grid {
+      display:grid;
+      grid-template-columns: repeat(auto-fit,minmax(260px,1fr));
+      gap:1rem;
+      margin-top:1rem;
+    }
+    .normal-badge {
+      background:#6f5ce8;
+      color:#fff;
+      padding:5px 12px;
+      border-radius:999px;
+      font-size:0.6rem;
+      font-weight:600;
+      display:inline-block;
+    }
+    .free-badge {
+      background:#ffb86c;
+      color:#1f1f30;
+      padding:5px 12px;
+      border-radius:999px;
+      font-size:0.6rem;
+      font-weight:600;
+      display:inline-block;
+    }
+    .note {
+      font-size:0.75rem;
+      color: var(--muted);
+    }
+    .status-line {
+      display:flex;
+      justify-content:space-between;
+      flex-wrap:wrap;
+      gap:6px;
+    }
+    .footer {
+      margin-top:3rem;
+      text-align:center;
+      font-size:0.7rem;
+      color: var(--muted);
+    }
+    code {
+      background: rgba(255,255,255,.08);
+      padding:2px 4px;
+      border-radius:4px;
+      font-size:0.75rem;
+    }
+  </style>
 </head>
 <body>
-  <header>
-    <h1>Akira API - Painel do Usuário</h1>
-    <p>Gerencie sua API Key e monitore seus requests</p>
-  </header>
+  <div class="container">
+    <header>
+      <div>
+        <h1>AKIRA-API <span class="badge">Painel</span></h1>
+        <div style="margin-top:4px; font-size:.9rem;">
+          Chaves: <span class="normal-badge">Normal (500 req)</span> &amp; <span class="free-badge">KEYFREE (infinita/mais fraca)</span>
+        </div>
+      </div>
+      <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
+        <div class="pill">Usuário: visitante</div>
+        <div class="pill">Plano: Gratuito / Normal</div>
+      </div>
+    </header>
 
-  <main>
-    <div class="flex-row">
-      <label for="apikey">Sua API Key:</label>
-      <input type="text" id="apikey" placeholder="4K1R4xxxxxxx..." autocomplete="off" />
+    <!-- Key panels -->
+    <div class="key-panel">
+      <!-- Normal key -->
+      <div class="card" id="normal-key-card">
+        <div style="display:flex; justify-content:space-between; align-items:start; flex-wrap:wrap; gap:10px;">
+          <div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <div class="normal-badge">Key Normal</div>
+              <div style="font-weight:600; margin-left:4px;">Limite: 500 requisições</div>
+            </div>
+            <div style="font-size:0.8rem; margin-top:4px;">Só gera nova quando a atual for esgotada.</div>
+          </div>
+          <div>
+            <button class="btn" id="generate-normal">Gerar Key</button>
+          </div>
+        </div>
+        <div class="status-line">
+          <div style="flex:1; min-width:160px; margin-top:8px;">
+            <div style="margin-bottom:6px;">Chave atual:</div>
+            <div class="key-display" id="normal-key">—</div>
+          </div>
+          <div style="min-width:220px; margin-top:8px;">
+            <div style="margin-bottom:4px;">Uso: <span id="normal-used">0</span> / 500</div>
+            <div class="meter">
+              <div class="meter-inner" id="normal-meter" style="width:0%;"></div>
+            </div>
+            <div class="note" id="normal-status-text">Nenhuma key ativa</div>
+          </div>
+        </div>
+        <div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="btn-secondary" id="copy-normal">Copiar Key</button>
+          <button class="btn-secondary" id="reset-normal">Zerar (dev)</button>
+        </div>
+      </div>
+
+      <!-- KEYFREE -->
+      <div class="card" id="free-key-card">
+        <div style="display:flex; justify-content:space-between; align-items:start; flex-wrap:wrap; gap:10px;">
+          <div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <div class="free-badge">KEYFREE</div>
+              <div style="font-weight:600; margin-left:4px;">Infinita, mais fraca</div>
+            </div>
+            <div style="font-size:0.8rem; margin-top:4px;">Sem expiração. Rate limit: 5 req/minuto.</div>
+          </div>
+          <div>
+            <div class="pill">Gratuita</div>
+          </div>
+        </div>
+        <div class="status-line">
+          <div style="flex:1; min-width:160px; margin-top:8px;">
+            <div style="margin-bottom:6px;">Chave fixa:</div>
+            <div class="key-display" id="free-key">KEYFREE</div>
+          </div>
+          <div style="min-width:220px; margin-top:8px;">
+            <div style="margin-bottom:4px;">Limite de taxa: <strong>5 requisições / 60s</strong></div>
+            <div class="meter">
+              <div class="meter-inner" id="free-meter" style="width:0%;"></div>
+            </div>
+            <div class="note" id="free-status-text">Disponível</div>
+          </div>
+        </div>
+        <div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="btn-secondary" id="copy-free">Copiar Key</button>
+          <button class="btn-secondary" id="simulate-free">Simular Req</button>
+        </div>
+      </div>
     </div>
-    <div class="flex-row">
-      <button id="btn-changeKey">Trocar API Key</button>
-      <button id="btn-getData">Fazer Requisição</button>
+
+    <!-- Features / rotas -->
+    <div class="grid">
+      <!-- Baixar música -->
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div><div style="font-size:1.1rem; font-weight:600;">Baixar Música</div><div class="note">Ex: sua rota /ytmp3 ou similar</div></div>
+          <div class="normal-badge">/ytmp3</div>
+        </div>
+        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+          <input type="text" id="music-url" placeholder="URL da música (YouTube etc)" style="flex:1; padding:10px; border-radius:8px; border:1px solid var(--border); background:#0f111a; color:#fff;" />
+          <button class="btn" id="download-music">Baixar Música</button>
+        </div>
+        <div class="note" id="music-result">Resultado: aguardando ação...</div>
+      </div>
+
+      <!-- Baixar vídeo -->
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div><div style="font-size:1.1rem; font-weight:600;">Baixar Vídeo</div><div class="note">Ex: sua rota /ytmp4</div></div>
+          <div class="normal-badge">/ytmp4</div>
+        </div>
+        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+          <input type="text" id="video-url" placeholder="URL do vídeo" style="flex:1; padding:10px; border-radius:8px; border:1px solid var(--border); background:#0f111a; color:#fff;" />
+          <button class="btn" id="download-video">Baixar Vídeo</button>
+        </div>
+        <div class="note" id="video-result">Resultado: aguardando ação...</div>
+      </div>
+
+      <!-- Pinterest -->
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div><div style="font-size:1.1rem; font-weight:600;">Pinterest</div><div class="note">Ex: rota /pinterest</div></div>
+          <div class="free-badge">/pinterest</div>
+        </div>
+        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+          <input type="text" id="pin-query" placeholder="Termo de busca" style="flex:1; padding:10px; border-radius:8px; border:1px solid var(--border); background:#0f111a; color:#fff;" />
+          <button class="btn" id="search-pin">Buscar Pinterest</button>
+        </div>
+        <div class="note" id="pin-result">Resultado: aguardando...</div>
+      </div>
+
+      <!-- Mediafire -->
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div><div style="font-size:1.1rem; font-weight:600;">Mediafire</div><div class="note">Ex: pegar link /mediafire</div></div>
+          <div class="normal-badge">/mediafire</div>
+        </div>
+        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+          <input type="text" id="mediafire-url" placeholder="URL do Mediafire" style="flex:1; padding:10px; border-radius:8px; border:1px solid var(--border); background:#0f111a; color:#fff;" />
+          <button class="btn" id="fetch-mediafire">Processar Mediafire</button>
+        </div>
+        <div class="note" id="mediafire-result">Resultado: aguardando...</div>
+      </div>
+
+      <!-- Meganz -->
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div><div style="font-size:1.1rem; font-weight:600;">Meganz</div><div class="note">Ex: rota /meganz</div></div>
+          <div class="normal-badge">/meganz</div>
+        </div>
+        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+          <input type="text" id="meganz-url" placeholder="URL do Meganz" style="flex:1; padding:10px; border-radius:8px; border:1px solid var(--border); background:#0f111a; color:#fff;" />
+          <button class="btn" id="fetch-meganz">Processar Meganz</button>
+        </div>
+        <div class="note" id="meganz-result">Resultado: aguardando...</div>
+      </div>
     </div>
 
-    <div class="info">
-      <p><strong>Status da Key:</strong> <span id="keyStatus">Nenhuma key inserida</span></p>
-      <p><strong>Requests restantes:</strong> <span id="requestsLeft">-</span></p>
+    <div class="footer">
+      <div>AKIRA-API dashboard • Substitua os stubs marcados com <code>TODO</code> pelas suas rotas reais como <code>/ytmp3</code>, <code>/ytmp4</code>, <code>/pinterest</code>, <code>/mediafire</code>, <code>/meganz</code> usando a key ativa no cabeçalho. </div>
     </div>
+  </div>
 
-    <div id="output">Resultado da requisição aparecerá aqui.</div>
+  <script>
+    // --- Gerenciamento de chaves ---
+    const NORMAL_LIMIT = 500;
+    let normalKeyData = { key: null, used: 0, active: false };
 
-    <section style="margin-top: 2rem; font-size: 0.9rem; line-height: 1.5;">
-      <h2>Sobre a Akira API</h2>
-      <p>
-        A Akira API oferece serviços incríveis para você integrar facilmente em seus projetos.
-        Cada usuário recebe uma API Key única que começa com <code>4K1R4</code>, garantindo segurança e controle.
-      </p>
-      <p>
-        Você pode trocar sua Key a qualquer momento usando o botão acima. Cada Key possui um limite de requests diários que é exibido acima.
-      </p>
-      <p>
-        Use a API para acessar dados atualizados, com alta disponibilidade e velocidade.
-      </p>
-    </section>
-  </main>
+    const FREE_RATE = 5;
+    const FREE_WINDOW_MS = 60 * 1000;
+    let freeTimestamps = [];
 
-<script>
-  // Simulando armazenamento da API Key e requests restantes (pode usar localStorage ou cookies)
-  let apiKey = '';
-  let requestsLeft = 10; // valor inicial simulado
-
-  // Função para gerar uma key aleatória começando com 4K1R4 + letras e números
-  function generateApiKey() {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    let key = '4K1R4';
-    for (let i = 0; i < 10; i++) {
-      key += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return key;
-  }
-
-  function updateUI() {
-    const keyInput = document.getElementById('apikey');
-    const keyStatus = document.getElementById('keyStatus');
-    const requestsLeftSpan = document.getElementById('requestsLeft');
-
-    if (!apiKey) {
-      keyStatus.textContent = 'Nenhuma key inserida';
-      requestsLeftSpan.textContent = '-';
-    } else {
-      keyStatus.textContent = `Key válida: ${apiKey}`;
-      requestsLeftSpan.textContent = requestsLeft;
-    }
-    keyInput.value = apiKey;
-  }
-
-  document.getElementById('btn-changeKey').addEventListener('click', () => {
-    apiKey = generateApiKey();
-    requestsLeft = 10; // reseta o contador de requests
-    updateUI();
-    document.getElementById('output').textContent = 'Nova API Key gerada com sucesso!';
-  });
-
-  document.getElementById('btn-getData').addEventListener('click', async () => {
-    const output = document.getElementById('output');
-
-    if (!apiKey) {
-      output.textContent = 'Por favor, gere ou insira uma API Key antes de fazer a requisição.';
-      return;
-    }
-    if (requestsLeft <= 0) {
-      output.textContent = 'Limite de requests atingido para a API Key atual.';
-      return;
+    function randomKey(length = 28) {
+      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+      let s = "";
+      for (let i = 0; i < length; i++) s += chars.charAt(Math.floor(Math.random() * chars.length));
+      return s;
     }
 
-    output.textContent = 'Carregando...';
-
-    try {
-      // Aqui você colocaria o endpoint real da sua API, incluindo a key (exemplo fictício)
-      const res = await fetch(`https://akira-api.com/data?key=${encodeURIComponent(apiKey)}`);
-
-      if (!res.ok) throw new Error(`Erro na requisição: ${res.status}`);
-
-      const data = await res.json();
-
-      output.textContent = JSON.stringify(data, null, 2);
-
-      requestsLeft--;
-      updateUI();
-
-    } catch (e) {
-      output.textContent = 'Erro: ' + e.message;
+    function updateNormalUI() {
+      document.getElementById("normal-key").textContent = normalKeyData.active ? normalKeyData.key : "—";
+      document.getElementById("normal-used").textContent = normalKeyData.used;
+      const percent = normalKeyData.active ? Math.min(100, (normalKeyData.used / NORMAL_LIMIT) * 100) : 0;
+      document.getElementById("normal-meter").style.width = percent + "%";
+      const statusText = normalKeyData.active
+        ? (normalKeyData.used >= NORMAL_LIMIT ? "Esgotada. Gere nova." : `Restam ${NORMAL_LIMIT - normalKeyData.used} req.`)
+        : "Nenhuma key ativa";
+      document.getElementById("normal-status-text").textContent = statusText;
+      document.getElementById("generate-normal").disabled = normalKeyData.active && normalKeyData.used < NORMAL_LIMIT;
     }
-  });
 
-  // Inicializa a UI
-  updateUI();
-</script>
+    function updateFreeUI() {
+      const now = Date.now();
+      freeTimestamps = freeTimestamps.filter(ts => now - ts <= FREE_WINDOW_MS);
+      const used = freeTimestamps.length;
+      const percent = Math.min(100, (used / FREE_RATE) * 100);
+      document.getElementById("free-meter").style.width = percent + "%";
+      const statusText = used >= FREE_RATE
+        ? `Rate limit atingido. Aguarde ${((FREE_WINDOW_MS - (now - freeTimestamps[0])) / 1000).toFixed(1)}s`
+        : `Usado ${used} / ${FREE_RATE} nesta janela.`;
+      document.getElementById("free-status-text").textContent = statusText;
+    }
+
+    updateNormalUI();
+    updateFreeUI();
+
+    document.getElementById("generate-normal").addEventListener("click", () => {
+      if (normalKeyData.active && normalKeyData.used < NORMAL_LIMIT) return;
+      normalKeyData.key = "AKI-" + randomKey(24);
+      normalKeyData.used = 0;
+      normalKeyData.active = true;
+      updateNormalUI();
+      alert("Key normal gerada: " + normalKeyData.key);
+    });
+
+    document.getElementById("copy-normal").addEventListener("click", () => {
+      if (!normalKeyData.active) return alert("Nenhuma key ativa.");
+      navigator.clipboard.writeText(normalKeyData.key).then(() => alert("Key normal copiada."));
+    });
+
+    document.getElementById("reset-normal").addEventListener("click", () => {
+      normalKeyData = { key: null, used: 0, active: false };
+      updateNormalUI();
+    });
+
+    document.getElementById("copy-free").addEventListener("click", () => {
+      navigator.clipboard.writeText("KEYFREE").then(() => alert("KEYFREE copiada."));
+    });
+
+    document.getElementById("simulate-free").addEventListener("click", () => {
+      const now = Date.now();
+      freeTimestamps = freeTimestamps.filter(ts => now - ts <= FREE_WINDOW_MS);
+      if (freeTimestamps.length >= FREE_RATE) {
+        updateFreeUI();
+        return alert("Rate limit da KEYFREE atingido.");
+      }
+      freeTimestamps.push(now);
+      updateFreeUI();
+      alert("Simulada 1 requisição com KEYFREE.");
+    });
+
+    function getActiveKeyForRequest() {
+      if (normalKeyData.active && normalKeyData.used < NORMAL_LIMIT) return { key: normalKeyData.key, type: "normal" };
+      return { key: "KEYFREE", type: "free" };
+    }
+
+    function incrementNormalUsage() {
+      if (normalKeyData.active && normalKeyData.used < NORMAL_LIMIT) {
+        normalKeyData.used += 1;
+        if (normalKeyData.used > NORMAL_LIMIT) normalKeyData.used = NORMAL_LIMIT;
+        updateNormalUI();
+      }
+    }
+
+    function canUseFree() {
+      const now = Date.now();
+      freeTimestamps = freeTimestamps.filter(ts => now - ts <= FREE_WINDOW_MS);
+      return freeTimestamps.length < FREE_RATE;
+    }
+
+    // Simulações de ações (troque pelos fetch reais)
+    const BASE = "https://akira-api-nix.onrender.com/"; // TODO: ajustar se mudar domínio
+
+    document.getElementById("download-music").addEventListener("click", async () => {
+      const url = document.getElementById("music-url").value.trim();
+      if (!url) return alert("Coloque a URL da música.");
+      const active = getActiveKeyForRequest();
+      if (active.type === "free" && !canUseFree()) {
+        updateFreeUI();
+        return alert("KEYFREE rate limit atingido.");
+      }
+      if (active.type === "normal") incrementNormalUsage();
+      else freeTimestamps.push(Date.now());
+      updateNormalUI();
+      updateFreeUI();
+
+      document.getElementById("music-result").textContent = "Chamando API de música...";
+
+      // Exemplo de fetch real (descomente e ajuste rota)
+      /*
+      try {
+        const res = await fetch(`${BASE}/ytmp3?url=${encodeURIComponent(url)}`, {
+          headers: { Authorization: `Bearer ${active.key}` }
+        });
+        const data = await res.json();
+        document.getElementById("music-result").textContent = JSON.stringify(data);
+      } catch (e) {
+        document.getElementById("music-result").textContent = "Erro: " + e.message;
+      }
+      */
+
+      // Simulação
+      setTimeout(() => {
+        document.getElementById("music-result").textContent =
+          `Simulado: baixando música de "${url}" com key ${active.key} (${active.type}).`;
+      }, 900);
+    });
+
+    document.getElementById("download-video").addEventListener("click", async () => {
+      const url = document.getElementById("video-url").value.trim();
+      if (!url) return alert("Coloque a URL do vídeo.");
+      const active = getActiveKeyForRequest();
+      if (active.type === "free" && !canUseFree()) {
+        updateFreeUI();
+        return alert("KEYFREE rate limit atingido.");
+      }
+      if (active.type === "normal") incrementNormalUsage();
+      else freeTimestamps.push(Date.now());
+      updateNormalUI();
+      updateFreeUI();
+
+      document.getElementById("video-result").textContent = "Chamando API de vídeo...";
+
+      // TODO: fetch real para /ytmp4
+      setTimeout(() => {
+        document.getElementById("video-result").textContent =
+          `Simulado: baixando vídeo de "${url}" com key ${active.key} (${active.type}).`;
+      }, 1100);
+    });
+
+    document.getElementById("search-pin").addEventListener("click", async () => {
+      const q = document.getElementById("pin-query").value.trim();
+      if (!q) return alert("Digite o termo.");
+      const active = getActiveKeyForRequest();
+      if (active.type === "free" && !canUseFree()) {
+        updateFreeUI();
+        return alert("KEYFREE rate limit atingido.");
+      }
+      if (active.type === "normal") incrementNormalUsage();
+      else freeTimestamps.push(Date.now());
+      updateNormalUI();
+      updateFreeUI();
+
+      document.getElementById("pin-result").textContent = "Buscando Pinterest...";
+
+      // TODO: rota /pinterest
+      setTimeout(() => {
+        document.getElementById("pin-result").textContent =
+          `Simulado: resultado para "${q}" com key ${active.key} (${active.type}).`;
+      }, 900);
+    });
+
+    document.getElementById("fetch-mediafire").addEventListener("click", async () => {
+      const url = document.getElementById("mediafire-url").value.trim();
+      if (!url) return alert("Coloque a URL do Mediafire.");
+      const active = getActiveKeyForRequest();
+      if (active.type === "free" && !canUseFree()) {
+        updateFreeUI();
+        return alert("KEYFREE rate limit atingido.");
+      }
+      if (active.type === "normal") incrementNormalUsage();
+      else freeTimestamps.push(Date.now());
+      updateNormalUI();
+      updateFreeUI();
+
+      document.getElementById("mediafire-result").textContent = "Processando Mediafire...";
+
+      // TODO: rota /mediafire
+      setTimeout(() => {
+        document.getElementById("mediafire-result").textContent =
+          `Simulado: extraindo de Mediafire "${url}" com key ${active.key} (${active.type}).`;
+      }, 1000);
+    });
+
+    document.getElementById("fetch-meganz").addEventListener("click", async () => {
+      const url = document.getElementById("meganz-url").value.trim();
+      if (!url) return alert("Coloque a URL do Meganz.");
+      const active = getActiveKeyForRequest();
+      if (active.type === "free" && !canUseFree()) {
+        updateFreeUI();
+        return alert("KEYFREE rate limit atingido.");
+      }
+      if (active.type === "normal") incrementNormalUsage();
+      else freeTimestamps.push(Date.now());
+      updateNormalUI();
+      updateFreeUI();
+
+      document.getElementById("meganz-result").textContent = "Processando Meganz...";
+
+      // TODO: rota /meganz
+      setTimeout(() => {
+        document.getElementById("meganz-result").textContent =
+          `Simulado: processando Meganz "${url}" com key ${active.key} (${active.type}).`;
+      }, 1000);
+    });
+
+    // atualização periódica da KEYFREE UI
+    setInterval(updateFreeUI, 500);
+  </script>
 </body>
 </html>
